@@ -46,8 +46,17 @@ $help    and &help ;
 my $source_tag = "post_RM" ;
 print STDERR "--> read all input File\n" ;
 
-### clustering TE copie ###
+
+############################
+##### READ INPUT FILES #####
+############################
+
+### Read classification file ###
+my $tmp_feat ;
+my $kp = 0 ;
+my $tmpK = 0 ;
 my $classi ;
+
 if ( not defined ($classiFile)) { die "*** Could not find file containing the classification of the library (option -classi)  ***\n" ; }
 open (LIST, $classiFile) or die "*** Could not open file containing the classification of the library : \"$classiFile\" ***\n" ;
 while(<LIST>) {
@@ -59,16 +68,10 @@ while(<LIST>) {
 }
 close LIST ;
 
+### Read FASTA file ###
 my $fasta_file = $optFasta ;
 my $seqio_obj  = Bio::SeqIO->new ( -file => $fasta_file, -format => "FASTA" ) ;
 my $seq = $seqio_obj->next_seq->seq ;
-my $flag = 0 ;
-my $tmpK = 0 ;
-my $tmp_feat ;
-my $gapFeat ;
-my $start ;
-my $end ;
-my $kp = 0 ;
 
 ### Read GFF file of LTR annotation ###
 my $LTR ;
@@ -178,7 +181,7 @@ foreach my $file (@ARGV) {
 		print STDERR ("*** WARNING :No gene annotation file give as option -gene ***\n") ; 
 	}
 
-	### sort hash of all input
+	### sort hash of all input features
 	my $k = 0 ;
 	my $inputFeat ;
 	foreach my $matchID ( sort { $tmp_feat->{$a}->start <=> $tmp_feat->{$b}->start || $tmp_feat->{$a}->end <=> $tmp_feat->{$b}->end } keys %{$tmp_feat}) {
@@ -203,7 +206,10 @@ foreach my $file (@ARGV) {
 
 	if (scalar (keys %{$inputFeat}) < 2 and scalar (keys %{$inputFeat}) > 0 ) { @final = &finishPostRM($inputFeat) ; goto EXIT ; } # cas particulier de fichier avec 1 seul TE prédit
 
-	### STEP 1 : resolve overlap :  ###
+	####################################
+	##### STEP 1 : resolve overlap #####
+	####################################
+
 	print STDERR ("--> step overlaping feature\n") ;
 	my $overlapingFeat = &overlaping ($inputFeat) ;
 
@@ -245,14 +251,16 @@ foreach my $file (@ARGV) {
 
 	if (scalar (keys %{$objFeat}) < 3) { @final = &finishPostRM($objFeat) ; goto EXIT ; } 
 
-	### STEP 2 : merge collinear feature :  ###
+	############################################
+	##### STEP 2 : merge collinear feature #####
+	############################################
 	print STDERR ("--> step merge collinear feature \n") ;
 	if ($verbosity == 4) { print STDERR ("--> resolveLTR\n\tTEid\tstart\tstrand\tend\ttargetStart\ttargetEnd\n") ;}
 	my $mergeFeat ;
 	my $kFeat = 0 ;
 	my $flag = 0 ;
 
-	for (my $i = 1 ; $i <= scalar (keys (%{$objFeat})) ; $i++ ) { # pour chacunes des subfeatures du hash match2
+	for (my $i = 1 ; $i <= scalar (keys (%{$objFeat})) ; $i++ ) { # pour chacunes des subfeatures du hash 
 		$kFeat++ ;
 		if ($i == 1 ) { $mergeFeat->{$kFeat} = $objFeat->{$i} ; next ; } # première boucle for 
 		my ($prev, $cur, $next) ; 
@@ -314,7 +322,9 @@ foreach my $file (@ARGV) {
 		elsif ($outputFormat eq "embl") { &_createEmbl (\@mergeFeat, $outputName, $seq) ; }
 	}
 
-	### STEP 3 : Join Feature ###
+	#################################
+	##### STEP 3 : Join feature #####
+	#################################
 	print STDERR ("--> step Join \n") ;
 	if ($verbosity == 4) { print STDERR (scalar (keys (%{$mergeFeat}))." subfeature after merge step\n") ; }
 	my @join ;
@@ -362,7 +372,6 @@ foreach my $file (@ARGV) {
 		}
 	}
 	$round++ ;
-	#~ print STDERR ("round ".$round." : ".$nbreJoin." join\n") ;
 	$k = 0 ;
 	my $size = scalar (keys (%{$mergeFeat})) ;
 	foreach my $key ( sort { $mergeFeat->{$a}->start <=> $mergeFeat->{$b}->start } keys %{$mergeFeat}) {
@@ -396,7 +405,10 @@ foreach my $file (@ARGV) {
 print $succefully ;
 exit ; 
 
-### SUB ###
+#######################
+##### Subroutines #####
+#######################
+
 sub finishPostRM {
 	my @final ;
 	foreach my $matchID (sort { $_[0]->{$a}->start <=> $_[0]->{$b}->start } keys %{$_[0]} ) {
@@ -482,8 +494,7 @@ sub mergeColFeat {
 	my $newFeat ;
 	if ($cur->{info}->{targetFamID} eq $prev->{info}->{targetFamID} and $cur->strand eq $prev->strand) {
 		if ($cur->strand eq 1 and $prev->strand eq 1) { # brin plus
-		
-			if ( defined ($classi->{$prev->{info}->{copieID}}->{"LTR5"}->{end}) and defined ($classi->{$cur->{info}->{copieID}}->{"LTR5"}->{end}) # prev LTR5' et cur LTR3' : Don't Merge
+			if ( defined ($classi->{$prev->{info}->{copieID}}->{"LTR5"}->{end}) and defined ($classi->{$cur->{info}->{copieID}}->{"LTR5"}->{end}) # soloLTR : prev LTR5' et cur LTR3' => Merge
 			and $prev->{info}->{targetEnd}  < $classi->{$prev->{info}->{copieID}}->{"LTR5"}->{end}
 			and $cur->{info}->{targetStart} > $classi->{$cur->{info}->{copieID}}->{"LTR3"}->{start} ) {
 				if ($cur->start - $prev->end < 200) {
@@ -493,8 +504,7 @@ sub mergeColFeat {
 				}
 				else {$return->{cur} = $cur ; }
 			}
-			
-			elsif ($prev->{info}->{targetEnd} < $cur->{info}->{targetEnd}  # colinearity in the consensus : Merge
+			elsif ($prev->{info}->{targetEnd} < $cur->{info}->{targetEnd}  # colinearity of preidction => Merge
 			and $prev->{info}->{targetEnd} + 50 < $prev->{info}->{targetLgth}
 			and $cur->end - $prev->start < (($prev->{info}->{targetLgth} + $cur->{info}->{targetLgth})/2) * 1.5
 			and $cur->{info}->{targetStart} > 50 ) {
@@ -502,7 +512,7 @@ sub mergeColFeat {
 				$return->{newFeat} = $newFeat ;
 			}
 			elsif (
-			$prev->{info}->{targetEnd} > $cur->{info}->{targetEnd} and $prev->{info}->{targetStart} < $cur->{info}->{targetStart} # cur inclue in prev : Merge
+			$prev->{info}->{targetEnd} > $cur->{info}->{targetEnd} and $prev->{info}->{targetStart} < $cur->{info}->{targetStart} # cur inclue in prev => Merge
 			and $cur->end - $prev->start < (($prev->{info}->{targetLgth} + $cur->{info}->{targetLgth})/2) * 1.5
 			and $prev->{info}->{targetEnd} + 50 < $prev->{info}->{targetLgth} ) {
 				$newFeat = &mergefeature ($prev, $cur, $prev->start, $cur->end, $prev->{info}->{targetStart}, $prev->{info}->{targetEnd} ) ;
@@ -548,7 +558,7 @@ sub resolveLTR {
 	my $newFeat ;
 	my $test = 0 ;
 	if (defined($classi->{$cur->{info}->{copieID}}->{"LTR5"}->{end})
-	and $cur->{info}->{targetEnd} <= $classi->{$cur->{info}->{copieID}}->{"LTR5"}->{end} + 500 ) { # séléction des feature brin plus inclue dans le LTR 5' + 500 pb
+	and $cur->{info}->{targetEnd} <= $classi->{$cur->{info}->{copieID}}->{"LTR5"}->{end} + 500 ) { # séléction des feature inclue dans le LTR 5' + 500 pb
 		if ($cur->strand eq 1 and $prev->strand eq 1 ) {
 			($newFeat, $test) = &wrongLTR5 ($prev, $cur, $next) ;
 			if ($test == 0 ) { ($newFeat, $test) = &wrongLTR5Inside ($prev, $cur, $next) ; }
@@ -559,7 +569,7 @@ sub resolveLTR {
 		}
 	}
 	elsif (defined($classi->{$cur->{info}->{copieID}}->{"LTR3"}->{end})
-	and $cur->{info}->{targetStart} >= $classi->{$cur->{info}->{copieID}}->{"LTR3"}->{start} - 500 ) { # séléction des feature brin plus inclue dans le LTR 5' + 500 pb
+	and $cur->{info}->{targetStart} >= $classi->{$cur->{info}->{copieID}}->{"LTR3"}->{start} - 500 ) { # séléction des feature inclue dans le LTR 3' + 500 pb
 		if ($cur->strand eq 1 and $next->strand eq 1) {
 			($newFeat, $test) = &wrongLTR3 ($prev, $cur, $next) ;
 			if ($test == 0 ) { ($newFeat, $test) = &wrongLTR3Inside ($prev, $cur, $next) ; }
@@ -572,7 +582,7 @@ sub resolveLTR {
 	return ($newFeat, $test) ;
 }
 
-sub wrongLTR5Inside {
+sub wrongLTR5Inside { # preidction of a LTR5 are between two LTR3 => LTR3 LTR5 LTR3
 	my ($prev, $wrong, $next) = @_ ;
 	my $newFeat ;
 	my $test = 0 ;
@@ -630,7 +640,7 @@ sub wrongLTR3Inside { # match of a LTR3' are between two LTR5' => LTR5 LTR3 LTR5
 	return ($newFeat, $test) ;
 }
 
-sub wrongLTR5 {
+sub wrongLTR5 { # wrong LTR5 at the end of the RT-LTR : LTR5-TE-LTR5
 	my ($true, $wrong, $rand) = @_ ;
 	my $newFeat ;
 	my $test = 0 ;
@@ -657,7 +667,7 @@ sub wrongLTR5 {
 	return ($newFeat, $test) ;
 }
 
-sub wrongLTR3 {
+sub wrongLTR3 { # wrong LTR3 at the beginning of the RT-LTR : LTR3-TE-LTR3
 	my ($rand, $wrong, $true) = @_ ;
 	my $test = 0 ;
 	my $newFeat ;
@@ -1138,7 +1148,6 @@ sub createParentFeature {
 	if ($var=~/^([A-Z]*_fam[n|c][0-9]*)\.[0-9]+$/) { $feature->{info}->{targetFamID} = $1 ; }
 	elsif ($var=~/^([A-Z]*_fam[n|c][0-9]+)$/) {$feature->{info}->{targetFamID} = $1 ; }
 	$feature->{info}->{targetLgth} = $feature->{compo}->{$var}->{conslgth} ;
-	#~ delete $feature->{info}->{copieID} ;
 	if (${$obj_feat1}->length >= ${$obj_feat2}->length) {$feature->{info}->{copieID} = ${$obj_feat1}->{info}->{copieID} ; }
 	elsif (${$obj_feat1}->length < ${$obj_feat2}->length) {$feature->{info}->{copieID} = ${$obj_feat2}->{info}->{copieID} ; }
 	return ($feature) ;
