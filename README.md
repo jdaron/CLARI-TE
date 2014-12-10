@@ -1,14 +1,12 @@
-CLARI-TE
-========
 This readme should help you get started with "clari-TE.pl", which is for 
 TE annotation
 
 --------------------------------------------------------------------------------
-- Setting up -------------------------------------------------------------------
+Setting up -------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 Using clari-TE.pl
-==================
+=================
 
 "clari-TE.pl" is a program that post process the xm output file of RepeatMasker.
 
@@ -32,12 +30,13 @@ To recap, "clari-TE.pl" requires:
   - a FASTA-format file containing your query sequence
 
 
-Example of Input FILE
-=====================
+Input FILE
+==========
 
 1) xm output file from RepeatMasker
 
-example : 
+example :
+---------
 1725 20.7  2.6  0.8 v443_2791 5 393 (40687) C ctgB_rep_0246#Unknown (7481) 396 1 *
 4791 21.8  0.8  3.3 v443_2791 378 1704 (39376) + ctgF_rep_0077#Unknown 322 1615 (7557) *
 5649 11.4  0.4  0.4 v443_2791 799 1704 (39376) + ctgF_rep_0055#Unknown 722 1627 (11086) 
@@ -46,7 +45,8 @@ example :
 
 2) Tabular file of the classification 
 
-example : 
+example :
+---------
 #sequenceID	family
 TREP100	RLC_famc1.1
 TREP1000	DTT_famn14
@@ -54,7 +54,8 @@ TREP1001	DTT_famn1
 
 3) Tabular file of the position of LTR in the LTR retrotransposons 
 
-example : 
+example :
+---------
 #sequenceID	family	LTRtype	start	end
 ctgH_rep_0307	RLG_famc3	LTR5	1	3945
 ctgH_rep_0307	RLG_famc3	LTR3	7931	12091
@@ -65,7 +66,8 @@ sr2_rep_0226	RLC_famc9	LTR3	4972	5185
 
 Note : only the locus_tag and the id is require to run clari-TE.pl, other tag (such as blastp_file...) are not necessary.
 
-example : 
+example :
+---------
 ID   unknown; SV 1; linear; unassigned DNA; STD; UNC; 1411106 BP.
 XX
 AC   unknown;
@@ -149,4 +151,42 @@ FT                   /post="RLG_famc36 8671bp 3854..5242" # tag
 FT                   /compo="RLG_famc36 100.00 " # composition of the prediction
 FT                   /id="3_v443_0001" # id of the prediction 
 FT                   /copie="ctgD_rep_0264" # sequenceID in the library used to annotated the prediction
+
+Licence
+=======
+
+Copyright or © or Copr. Josquin Daron and Frédéric Choulet INRA-GDEC 01/09/2014
+ 
+email: josquin.daron@clermont.inra.fr and frederic.choulet@clermont.inra.fr
+
+This software is a computer program whose purpose is to predict Transposable 
+Elements (TEs) in complexe genome such as wheat. The program correct raw similarity
+search result from RepeatMasker.
+
+This software is governed by the CeCILL license under French law and
+abiding by the rules of distribution of free software.  You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+ 
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+
 
