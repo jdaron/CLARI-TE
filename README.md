@@ -27,6 +27,9 @@ To recap, "clari-TE.pl" requires:
   - a tabular file containing the position of the LTR retrotransposons present in the library
   - embl file containing the gene annotation of the sequence (in triAnnot format).
   - a FASTA-format file containing your query sequence (multi-FASTA file is not accepted)
+  
+Command line example :
+clari-TE.pl -LTR clariTeRep_LTRposition.txt -gene v443_0001.annoGene.embl -classi clariTeRep_classification.txt -fasta v443_0001.fas -v 4 -dir [your directory] v443_0001.fas.out.xm
 
 
 iv) Input FILE
