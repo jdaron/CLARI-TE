@@ -1,36 +1,34 @@
-This readme should help you get started with "clari-TE.pl", which is for 
+This readme should help you get started with "clariTE.pl", which is for 
 TE annotation
 
 --------------------------------------------------------------------------------
 Setting up -------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-i) Using clari-TE.pl
+i) Using clariTE.pl
 ====================
 
-"clari-TE.pl" is a program that post process the xm output file of RepeatMasker.
+"clariTE.pl" is a program that post process the xm output file of RepeatMasker.
 
 
 ii) Usage
 =========
 
-clari-TE.pl -fasta <fasta_file> -LTR <position of LTR> -classi <classification> -gene <embl> <xm file>
+clariTE.pl -fasta <fasta_file> -LTR <position of LTR> -classi <classification> -gene <embl> <xm file>
 
+Command line example :
+clariTE.pl -LTR clariTeRep_LTRposition.txt -gene v443_0001.annoGene.embl -classi clariTeRep_classification.txt -fasta v443_0001.fas -dir [your directory] v443_0001.fas.out.xm
 
 iii) REQUIREMENTS
 =================
 
-To recap, "clari-TE.pl" requires:
+To recap, "clariTE.pl" requires:
 
   - the output file ".xm" from RepeatMasker
   - a tabular file containing the classification of the library use in RepeatMasker :
   - a tabular file containing the position of the LTR retrotransposons present in the library
   - embl file containing the gene annotation of the sequence (in triAnnot format).
   - a FASTA-format file containing your query sequence (multi-FASTA file is not accepted)
-  
-Command line example :
-clari-TE.pl -LTR clariTeRep_LTRposition.txt -gene v443_0001.annoGene.embl -classi clariTeRep_classification.txt -fasta v443_0001.fas -dir [your directory] v443_0001.fas.out.xm
-
 
 iv) Input FILE
 ==============
@@ -66,7 +64,7 @@ sr2_rep_0226	RLC_famc9	LTR5	1	214
 sr2_rep_0226	RLC_famc9	LTR3	4972	5185
 
 4) Gene annotation in EMBL format TriAnnot
-Note : only the locus_tag and the id is require to run clari-TE.pl, other tag (such as blastp_file...) are not necessary.
+Note : only the locus_tag and the id is require to run clariTE.pl, other tag (such as blastp_file...) are not necessary.
 
 example :
 ---------
@@ -101,7 +99,7 @@ Note : only one sequence could be contained it the FASTA file, multi fasta file 
 v) Help
 =======
 
-#### clari-TE.pl ####
+#### clariTE.pl ####
 #
 # CREATED:    2012-05-31
 # LAST MODIF: 01/02/2014
@@ -112,7 +110,7 @@ v) Help
 # 
 
 USAGE:
-       clari-TE.pl -fasta <fasta_file> -LTR <position of LTR> -classi <classification> -gene <embl> <xm file>
+       clariTE.pl -fasta <fasta_file> -LTR <position of LTR> -classi <classification> -gene <embl> <xm file>
 
        ### OPTIONS ###
 
