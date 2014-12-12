@@ -5,33 +5,32 @@ TE annotation
 Setting up -------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-Using clari-TE.pl
-=================
+i) Using clari-TE.pl
+====================
 
 "clari-TE.pl" is a program that post process the xm output file of RepeatMasker.
 
 
-Usage
-=====
+ii) Usage
+=========
 
 clari-TE.pl -fasta <fasta_file> -LTR <position of LTR> -classi <classification> -gene <embl> <xm file>
 
 
-REQUIREMENTS
-============
+iii) REQUIREMENTS
+=================
 
 To recap, "clari-TE.pl" requires:
 
   - the output file ".xm" from RepeatMasker
   - a tabular file containing the classification of the library use in RepeatMasker :
-  - a tabular file containing the position of the LTR retrotransposons present in the library :
-	(note : the total number of LTR retrotransposons is not obligated to be present in this file) 
+  - a tabular file containing the position of the LTR retrotransposons present in the library
   - embl file containing the gene annotation of the sequence (in triAnnot format).
-  - a FASTA-format file containing your query sequence
+  - a FASTA-format file containing your query sequence (multi-FASTA file is not accepted)
 
 
-Input FILE
-==========
+iv) Input FILE
+==============
 
 1) xm output file from RepeatMasker
 
@@ -53,6 +52,7 @@ TREP1000	DTT_famn14
 TREP1001	DTT_famn1
 
 3) Tabular file of the position of LTR in the LTR retrotransposons 
+Note : the total number of LTR retrotransposons is not obligated to be present in this file.
 
 example :
 ---------
@@ -63,7 +63,6 @@ sr2_rep_0226	RLC_famc9	LTR5	1	214
 sr2_rep_0226	RLC_famc9	LTR3	4972	5185
 
 4) Gene annotation in EMBL format TriAnnot
-
 Note : only the locus_tag and the id is require to run clari-TE.pl, other tag (such as blastp_file...) are not necessary.
 
 example :
@@ -93,8 +92,11 @@ FT                   /note="Function_target: F2CSA4 22 361"
 FT                   /note="Status: High Confidence"
 
 
-Help
-====
+5) FASTA file
+Note : only one sequence could be contained it the FASTA file, multi fasta file are accepted
+
+v) Help
+=======
 
 #### clari-TE.pl ####
 #
@@ -120,8 +122,8 @@ USAGE:
        -v:                    verbosity (3,4)
        
 
-Output format
-=============
+vi) Output format
+=================
 
 	1) In STDERR
 
@@ -152,12 +154,12 @@ FT                   /compo="RLG_famc36 100.00 " # composition of the prediction
 FT                   /id="3_v443_0001" # id of the prediction 
 FT                   /copie="ctgD_rep_0264" # sequenceID in the library used to annotated the prediction
 
-Licence
-=======
+vii) Licence
+============
 
-Copyright or © or Copr. Josquin Daron and Frédéric Choulet INRA-GDEC 01/09/2014
+Copyright or © or Copr. Josquin Daron INRA-GDEC 01/09/2014
  
-email: josquin.daron@clermont.inra.fr and frederic.choulet@clermont.inra.fr
+email: josquin.daron@clermont.inra.fr
 
 This software is a computer program whose purpose is to predict Transposable 
 Elements (TEs) in complexe genome such as wheat. The program correct raw similarity
